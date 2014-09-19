@@ -1,0 +1,11 @@
+2014-07-20 13:57:38
+Ref: c9342d45897bbc2
+email: 1112
+transferType: import
+From: SHANGHAI
+To: MELBOURNE
+Cube: 0.82
+FreightCharge: 8.17
+LocalCharge: 116.26
+Cartage: 95
+ClearanceCharge: 600

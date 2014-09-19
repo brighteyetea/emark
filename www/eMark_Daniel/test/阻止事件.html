@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(e) {
+    $("a").click(function(e) {
+		e.stopPropagation();
+	});
+});
+</script>
+
+</head>
+	
+<body>
+<a href="http://w3c.org" onclick="alert('JavaScript Click Event');" title="HHHH">点击链接</a>
+
+</body>
+</html>

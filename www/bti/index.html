@@ -1,0 +1,569 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" type="text/css" href="css/frame.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/widget.css">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+	<script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	<script type="text/javascript" src="/QS1.2/JS/functions.js"></script>
+	<script type="text/javascript"> 
+	$(document).ready(function(){
+		$("#fcl_import_or_export_select_id").change(function(){
+                //clear suburb
+                $("#fcl_suburb_select_id").empty();
+                $("#fcl_suburb_select_id").append(new Option("Delivery Or Pick Up", "0"));
+                $("#fcl_suburb_select_id [value = 0]").prop("disabled", true);
+                $("#fcl_suburb_select_id [value = 0]").attr("selected", true); 
+                
+				//export disable clearence
+				if($("#fcl_import_or_export_select_id").children('option:selected').val() === "export") {
+					$("#fcl_clearance_select_id").attr('disabled', 'disabled');
+					$("#fcl_clearance_select_id").get(0).selectedIndex=0;
+					$("#fcl_container_type_id").get(0).selectedIndex=0;
+					$("#fcl_suburb_select_id").get(0).selectedIndex=0;						
+				} else {
+					$("#fcl_clearance_select_id").attr('disabled', false);
+					$("#fcl_container_type_id").get(0).selectedIndex=0;
+					$("#fcl_suburb_select_id").get(0).selectedIndex=0;	
+				}
+				
+                var request = $.ajax({
+                    type: "POST",
+                    url: "loadPorts.php",
+                    dataType: "json",
+                    data: {transferType: $(this).children('option:selected').val()},
+                    ansync: false,
+                    cache: false
+                });
+                
+                request.done(function(jsonData){
+                    //init ports select
+                    $("#fcl_load_port_select_id").empty();
+                    $("#fcl_discharge_port_select_id").empty();
+                    $("#fcl_load_port_select_id").append(new Option("Select an origin port", "0"));
+                    $("#fcl_load_port_select_id [value = 0]").prop("disabled", true);
+                    $("#fcl_load_port_select_id [value = 0]").attr("selected", true);
+                    $("#fcl_discharge_port_select_id").append(new Option("Select a destination port", "0"));
+                    $("#fcl_discharge_port_select_id [value = 0]").prop("disabled", true);
+                    $("#fcl_discharge_port_select_id [value = 0]").attr("selected", true);
+                    
+                    for(var portID in jsonData[0]) {
+                        $("#fcl_load_port_select_id").append(new Option(jsonData[0][portID], portID));
+                    }
+                    
+                    for(var portID in jsonData[1]) {
+                        $("#fcl_discharge_port_select_id").append(new Option(jsonData[1][portID], portID));
+                    }
+                });
+            });
+            
+            $("#fcl_discharge_port_select_id").change(function(){//load suburb
+                if($("#fcl_import_or_export_select_id").children('option:selected').val() === "import") {
+                    loadSuburbFcl($(this).children('option:selected').val());
+                }
+            });
+            
+            $("#fcl_load_port_select_id").change(function(){//load suburb
+                if($("#fcl_import_or_export_select_id").children('option:selected').val() === "export") {
+                    loadSuburbFcl($(this).children('option:selected').val());
+                }
+            });
+
+            function loadSuburbFcl($port_id) {
+                var request = $.ajax({
+                    type: "POST",
+                    url: "loadSuburb.php",
+                    dataType: "json",
+                    data: {portID: $port_id},
+                    ansync: false,
+                    cache: false
+                });
+                request.done(function(jsonData){
+                    $("#fcl_suburb_select_id").empty();
+                    $("#fcl_suburb_select_id").append(new Option("Delivery Or Pick Up", "0"));
+                    $("#fcl_suburb_select_id [value = 0]").prop("disabled", true);
+                    $("#fcl_suburb_select_id [value = 0]").attr("selected", true);
+                    
+                    for(var suburbID in jsonData){
+                        $("#fcl_suburb_select_id").append(new Option(jsonData[suburbID], suburbID));    
+                    }
+                });
+            }
+            
+            $("#fcl_quote_button_id").click(function(){					
+				$("#mask_fcl").css({visibility:"visible"}); 
+				$("#message_fcl").css({visibility:"visible"});
+				$("body").css({overflow:"hidden"});
+			});
+			
+			$("#e_mail_cancel_button_fcl").click(function(){					
+				$("#mask_fcl").css({visibility:"hidden"}); 
+				$("#message_fcl").css({visibility:"hidden"});
+				$("body").css({overflow:"visible"});
+			});
+			
+			
+			$("#e_mail_confirm_button_fcl").click(function(){
+					$("#message_fcl").css({visibility:"hidden"});
+					$("#loading").css({visibility:"visible"});
+					var request = $.ajax({
+						type: "POST",
+						url: "process_fcl.php",
+						dataType: "json",
+						data:{ transferType: $("#fcl_import_or_export_select_id").children('option:selected').val(),
+								loadPort: $("#fcl_load_port_select_id").children('option:selected').val(),
+								dischargePort: $("#fcl_discharge_port_select_id").children('option:selected').val(),
+								containerType: $("#fcl_container_type_id").children('option:selected').val(),
+								suburb: $("#fcl_suburb_select_id").children('option:selected').val(),
+								clearance: $("#fcl_clearance_select_id").children('option:selected').val(),
+								email: $("#e_mail_id_fcl").val()},
+						ansync: false,
+						cache: false
+					});
+
+					request.done(function(jsonData){
+						$("#content").empty();
+						$("#content").append(jsonData.TransferType.toUpperCase() + "<br />");
+						$("#content").append("Reference Number: " + jsonData.Ref.toUpperCase() + "<br />");
+						$("#content").append("E-mail: " + jsonData.Email + "<br />");
+						$("#content").append("From: " + jsonData.From + "<br />");
+						$("#content").append("To: " + jsonData.To + " <br/>");
+						$("#content").append("Container Type: " + jsonData.ContainerType + "<br />");
+						$("#content").append("Freight Charge(Inclusive BAF): $" + jsonData.FreightCharge + " USD<br />");
+						if($("#fcl_import_or_export_select_id").children('option:selected').val() === "import") {
+							$("#content").append("Local Charge: $" + jsonData.LocalCharge + " AUD<br />");
+						} else {
+							$("#content").append("Local Charge(Handing, Document and Clearance Fee): $" + jsonData.LocalCharge + " AUD<br />");
+						}  
+						if(jsonData.ClearanceCharge !== 0) {
+							$("#content").append("Clearance Charge: $" + jsonData.ClearanceCharge + " AUD<br />");
+						}
+						if(jsonData.Cartage !== 0) {
+							$("#content").append("Cartage Charge: $" + jsonData.Cartage + " AUD<br />");
+						}
+						
+						$("#content").append("<strong><br />Term & Comments:<br />" +
+							"*  The above rates are current at the time of writing and are subject to alteration<br />" +
+							"*  All business is transacted under our standard trading terms and conditions<br />" +
+							"*  Cartage does not include detention charges<br/>" +
+							"*  This quote is valid for a period of 30 days, if not signed and returned, this will become null & void and previous accepted quote will remain valid<br/>" +
+							"*  All quotes are net of the impact of the goods and Services Tax (GST) and 10% will be added, where appropriate, to the price quoted.<br />" +
+							"*  Any additional fees incurred due to special direction of Customs or AQIS, will be for the account of the consignee<br /></strong>");
+						$("#loading").css({visibility:"hidden"});
+						$("#mask_fcl").css({visibility:"hidden"});						
+						$("body").css({overflow:"visible"});
+					});
+				});
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////			
+			$("#lcl_import_or_export_select_id").change(function(){
+                //clear suburb
+                $("#lcl_suburb_select_id").empty();
+                $("#lcl_suburb_select_id").append(new Option("Delivery Or Pick Up", "0"));
+                $("#lcl_suburb_select_id [value = 0]").prop("disabled", true);
+                $("#lcl_suburb_select_id [value = 0]").attr("selected", true); 
+                
+				if($("#lcl_import_or_export_select_id").children('option:selected').val() === "export") {
+					$("#lcl_clearance_select_id").attr('disabled', 'disabled');
+					$("#lcl_clearance_select_id").get(0).selectedIndex=0;
+					$("#lcl_suburb_select_id").get(0).selectedIndex=0;	
+					$("#lcl_input_l_id").val("");
+					$("#lcl_input_w_id").val("");
+					$("#lcl_input_h_id").val("");
+					$("#lcl_input_weight_id").val("");
+				} else {
+					$("#lcl_clearance_select_id").attr('disabled', false);
+					$("#lcl_suburb_select_id").get(0).selectedIndex=0;	
+					$("#lcl_input_l_id").val("");
+					$("#lcl_input_w_id").val("");
+					$("#lcl_input_h_id").val("");
+					$("#lcl_input_weight_id").val("");
+				}
+				
+                var request = $.ajax({
+                    type: "POST",
+                    url: "loadPorts.php",
+                    dataType: "json",
+                    data: {transferType: $(this).children('option:selected').val()},
+                    ansync: false,
+                    cache: false
+                });
+                
+                request.done(function(jsonData){
+                    //init ports select
+                    $("#lcl_load_port_select_id").empty();
+                    $("#lcl_discharge_port_select_id").empty();
+                    $("#lcl_load_port_select_id").append(new Option("Select an origin port", "0"));
+                    $("#lcl_load_port_select_id [value = 0]").prop("disabled", true);
+                    $("#lcl_load_port_select_id [value = 0]").attr("selected", true);
+                    $("#lcl_discharge_port_select_id").append(new Option("Select a destination port", "0"));
+                    $("#lcl_discharge_port_select_id [value = 0]").prop("disabled", true);
+                    $("#lcl_discharge_port_select_id [value = 0]").attr("selected", true);
+                    
+                    for(var portID in jsonData[0]) {
+                        $("#lcl_load_port_select_id").append(new Option(jsonData[0][portID], portID));
+                    }
+                    
+                    for(var portID in jsonData[1]) {
+                        $("#lcl_discharge_port_select_id").append(new Option(jsonData[1][portID], portID));
+                    }
+                });
+            });
+            
+            $("#lcl_discharge_port_select_id").change(function(){//load suburb
+                if($("#lcl_import_or_export_select_id").children('option:selected').val() === "import") {
+                    loadSuburb($(this).children('option:selected').val());
+                }
+            });
+            
+            $("#lcl_load_port_select_id").change(function(){//load suburb
+                if($("#lcl_import_or_export_select_id").children('option:selected').val() === "export") {
+                    loadSuburb($(this).children('option:selected').val());
+                }
+            });
+
+            function loadSuburb($port_id) {
+                var request = $.ajax({
+                    type: "POST",
+                    url: "loadSuburb.php",
+                    dataType: "json",
+                    data: {portID: $port_id},
+                    ansync: false,
+                    cache: false
+                });
+                request.done(function(jsonData){
+                    $("#lcl_suburb_select_id").empty();
+                    $("#lcl_suburb_select_id").append(new Option("Delivery Or Pick Up", "0"));
+                    $("#lcl_suburb_select_id [value = 0]").prop("disabled", true);
+                    $("#lcl_suburb_select_id [value = 0]").attr("selected", true);
+                    
+                    for(var suburbID in jsonData){
+                        $("#lcl_suburb_select_id").append(new Option(jsonData[suburbID], suburbID));    
+                    }
+                });
+            }
+            
+			$("#lcl_quote_button_id").click(function() {
+				$("#mask_lcl").css({visibility:"visible"}); 
+				$("#message_lcl").css({visibility:"visible"});
+				$("body").css({overflow:"hidden"});
+			});
+			
+			$("#e_mail_cancel_button_lcl").click(function(){					
+				$("#mask_lcl").css({visibility:"hidden"}); 
+				$("#message_lcl").css({visibility:"hidden"});
+				$("body").css({overflow:"visible"});
+			});
+			
+            $("#e_mail_confirm_button_lcl").click(function() {
+				$("#message_lcl").css({visibility:"hidden"});
+				$("#loading").css({visibility:"visible"});
+                //check items
+                var request = $.ajax({
+                    type: "POST",
+                    url: "process_lcl.php",
+                    dataType: "json",
+                    data:{ transferType: $("#lcl_import_or_export_select_id").children('option:selected').val(),
+                            clearance: $("#lcl_clearance_select_id").children('option:selected').val(),
+                            loadPort: $("#lcl_load_port_select_id").children('option:selected').val(),
+                            dischargePort: $("#lcl_discharge_port_select_id").children('option:selected').val(),
+                            cube: $("#lcl_input_l_id").val() * $("#lcl_input_w_id").val() * $("#lcl_input_h_id").val(),
+							weight: $("#lcl_input_weight_id").val(),
+                            suburb: $("#lcl_suburb_select_id").children('option:selected').val(),
+							email: $("#e_mail_id_lcl").val()},
+                    ansync: false,
+                    cache: false
+                });
+
+                request.done(function(jsonData){
+                    $("#content").empty();
+                    $("#content").append(jsonData.transferType.toUpperCase() + "<br />");
+					$("#content").append("Reference Number: " + jsonData.Ref.toUpperCase() + "<br />");
+                    $("#content").append("E-mail: " + jsonData.email + "<br />");
+                    $("#content").append("From: " + jsonData.From + "<br />");
+                    $("#content").append("To: " + jsonData.To + " <br/>");
+                    $("#content").append("Cube: " + jsonData.Cube + "<br />");
+                    $("#content").append("Freight Charge(Inclusive BAF): $" + jsonData.FreightCharge + " USD<br />");
+					if($("#lcl_import_or_export_select_id").children('option:selected').val() === "import") {
+						$("#content").append("Local Charge(Wharfage Fee): $" + jsonData.LocalCharge + " AUD<br />");
+					} else {
+						$("#content").append("Local Charge(Handing, Document and Clearance Fee): $" + jsonData.LocalCharge + " AUD<br />");
+					}                    
+					if(jsonData.ClearanceCharge !== 0) {
+						$("#content").append("Clearance Charge: $" + jsonData.ClearanceCharge + " AUD<br />");
+					}
+                    if(jsonData.Cartage !== 0) {
+                        $("#content").append("Cartage Charge: $" + jsonData.Cartage + " AUD<br />");
+                    }
+					
+					$("#content").append("<strong><br />Term & Comments:<br />" +
+						"*  The above rates are current at the time of writing and are subject to alteration<br />" +
+						"*  All business is transacted under our standard trading terms and conditions<br />" +
+						"*  Cartage does not include detention charges<br/>" +
+						"*  This quote is valid for a period of 30 days, if not signed and returned, this will become null & void and previous accepted quote will remain valid<br/>" +
+						"*  All quotes are net of the impact of the goods and Services Tax (GST) and 10% will be added, where appropriate, to the price quoted.<br />" +
+						"*  Any additional fees incurred due to special direction of Customs or AQIS, will be for the account of the consignee<br /></strong>");
+					
+					$("#mask_lcl").css({visibility:"hidden"}); 
+					$("#loading").css({visibility:"hidden"});
+					$("body").css({overflow:"visible"});
+                });
+            });
+		
+		if($("#lcl_import_or_export_select_id").children('option:selected').val() === "export") {
+		
+		}
+		
+
+		
+		$('#head_left').mousedown(function(){
+			$(this).css("background-color","#ddd");
+			$('#head_right').css("background-color","#ffff66");
+			$('#table_lcl').hide();
+			$("#table_fcl").show();
+		});
+		
+		$('#head_right').mousedown(function(){
+			$(this).css("background-color","#ddd");
+			$('#head_left').css("background-color","#99ccff");
+			$("#table_fcl").hide();
+			$("#table_lcl").show();
+		});
+		
+	});
+	
+	</script>
+	<!--[if lt IE 9]>
+　　　　<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+　　<![endif]-->
+	<title>
+		QS 1.4
+	</title>
+</head>
+<body>
+	<div id="pagewrap">
+		
+		<!-- HEADER -->
+		<div id="header">
+			<hgroup>
+				<h1 id="site-logo">
+					<a href="a">BTi</a>
+				</h1>
+				<h2 id="site-description">
+					Quote in BTi Logistic
+				</h2>
+			</hgroup>
+			<nav>
+				<ul id="main-nav" class="clearfix">
+					<li><a href="#">Home</a></li>
+				</ul>		
+			</nav>
+		</div>
+		
+		<!-- SIDE BAR -->
+		<div id="sidebar">
+			<div id="head_left">FCL FREIGHT CALCULATOR</div>
+			<div id="head_right">LCL FREIGHT CALCULATOR</div>
+			<section class="widget">
+				<table cellpadding="0" cellspacing="0">
+                    <tbody id="table_fcl" class="table_style_fcl">
+                    	<tr>
+							<td colspan="2">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<select id="fcl_import_or_export_select_id" name="import_or_export">
+							        <option value="0" disabled selected>Import Or Export</option> 
+							        <option value="import">Import Sea</option>
+							        <option value="export">Export Sea</option>
+							    </select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" background="images/Calc_Divider.gif">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<select size="1" id="fcl_load_port_select_id">
+							        <option value="0" disabled selected>Select an origin port</option>
+							    </select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" background="images/Calc_Divider.gif">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<select name="discharge_port" size="1" id="fcl_discharge_port_select_id">
+							        <option value="0" disabled selected>Select a destination port</option>
+							    </select>	
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" background="images/Calc_Divider.gif">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<select id="fcl_container_type_id">
+							        <option value="0" disabled selected>Container type</option> 
+							        <option value="20GP">20 FT GP</option>
+							        <option value="40GP">40 FT GP</option>
+							    </select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" background="images/Calc_Divider.gif">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<select name="suburb" size="1" id="fcl_suburb_select_id">
+							        <option value="0" selected>Delivery Or Pick Up</option>
+							    </select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" background="images/Calc_Divider.gif">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<select name="clearance" size="1" id="fcl_clearance_select_id">
+							        <option value="0" disabled selected>Clearance</option>
+									<option value="Yes">Yes</option>
+									<option value="No">No</option>
+							    </select>
+							</td>
+						</tr>
+                        <tr>
+							<td colspan="2">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<input id="fcl_quote_button_id" type="button" value="GET QUOTE"/>
+							</td>
+						</tr>
+                        <tr>
+							<td colspan="2">&nbsp;</td>
+						</tr>
+					</tbody>
+                    <!-- - - - - - - - - - - - - - - - - - - - - - - - - LCL DIVIDER - - - - - -  - - - - - - - - - - - - - - - - - - - -->
+					<tbody id="table_lcl" class="table_style_lcl">
+                    	<tr>
+							<td colspan="2">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<select id="lcl_import_or_export_select_id" name="import_or_export">
+							        <option value="0" disabled selected>Import Or Export</option> 
+							        <option value="import">Import Sea</option>
+							        <option value="export">Export Sea</option>
+							    </select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" background="images/Calc_Divider.gif">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<select name="load_port" size="1" id="lcl_load_port_select_id">
+							        <option value="0" disabled selected>Select an origin port</option>
+							    </select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" background="images/Calc_Divider.gif">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<select name="discharge_port" size="1" id="lcl_discharge_port_select_id">
+							        <option value="0" disabled selected>Select a destination port</option>
+							    </select>	
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" background="images/Calc_Divider.gif">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+						L&nbsp;<input id="lcl_input_l_id" type="text" class="input_text"/>cm&nbsp;*&nbsp;
+						W&nbsp;<input id="lcl_input_w_id" type="text" class="input_text"/>cm&nbsp;*&nbsp;
+						H&nbsp;<input id="lcl_input_h_id" type="text" class="input_text"/>cm
+						  </td>
+						</tr>
+						<tr>
+							<td colspan="2" background="images/Calc_Divider.gif">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2" Style="text-align:left">
+						OR&nbsp;&nbsp;WEIGHT&nbsp;<input id="lcl_input_weight_id" type="text" class="input_text"/>kg
+						  </td>
+						</tr>
+						<tr>
+							<td colspan="2" background="images/Calc_Divider.gif">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<select name="suburb" size="1" id="lcl_suburb_select_id">
+							        <option value="0" selected>Delivery Or Pick Up</option>
+							    </select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" background="images/Calc_Divider.gif">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<select name="clearance" size="1" id="lcl_clearance_select_id">
+							        <option value="0" disabled selected>Clearance</option>
+									<option value="Yes">Yes</option>
+									<option value="No">No</option>
+							    </select>
+                                
+							</td>
+						</tr>
+                        <tr>
+							<td colspan="2">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<input id="lcl_quote_button_id" type="button" value="GET QUOTE" class="input_get_quote"/>
+							</td>
+						</tr>
+                        <tr>
+							<td colspan="2">&nbsp;</td>
+						</tr>
+					</tbody>
+			    </table>
+			</section>
+		</div>
+		
+		<!-- CONTENT -->
+		<div id="content">
+			<p>BTi Logistics provides a comprehensive range of Import and Export services, and our partners overseas have been selected in order to provide not only extensive geographical coverage and competitive rates/service mix, but also consistently reliable level of communications.The close working relationship we have with our offices and agents, allows us to monitor and control all freight movements from the time the order is placed, keeping our clients well informed of shipment status at all times.Our capabilities in Freight Forwarding are not limited to standard Airfreight or Seafreight consignments. BTi Logistics has the facilities and expertise to handle all aspects of International Freight Forwarding, from Small Parcels Express services through to large Commercial Projects involving thousands of tonnes of freight and the co-ordination of Vessels and Ground Handling facilities worldwide.</p>
+		</div>
+
+		<!-- FOOTER -->
+		<div id="footer">
+			<p>Design By FUDA</p>
+		</div>
+	</div>
+	
+	<div id="message_fcl"><br />Please Input Your E-mail Address<br/><br/>
+	E-mail <input id="e_mail_id_fcl" type="text" /><br/><br/>
+	<input id="e_mail_confirm_button_fcl" type="button" value="GET QUOTE" class="input_get_quote"/>
+	&nbsp;&nbsp;&nbsp;
+	<input id="e_mail_cancel_button_fcl" type="button" value="CANCEL" class="input_get_quote">
+	</div>
+	<div id="mask_fcl"></div>
+	<div id="message_lcl"><br />Please Input Your E-mail Address<br/><br/>
+	E-mail <input id="e_mail_id_lcl" type="text" /><br/><br/>
+	<input id="e_mail_confirm_button_lcl" type="button" value="GET QUOTE" class="input_get_quote"/>
+	&nbsp;&nbsp;&nbsp;
+	<input id="e_mail_cancel_button_lcl" type="button" value="CANCEL" class="input_get_quote">
+	</div>
+	<div id="loading"><h1><br />Quote Processing</h1></div>
+	<div id="mask_lcl"></div>
+</body>
+</html>

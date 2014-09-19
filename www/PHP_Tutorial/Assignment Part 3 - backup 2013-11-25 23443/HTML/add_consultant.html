@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Add Concultant</title>
+<link rel="stylesheet" type="text/css" href="../CSS/mavis.css" />
+<link rel="stylesheet" type="text/css" href="../CSS/style.css" />
+<link href='http://fonts.googleapis.com/css?family=Varela' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Orbitron:400,500,700,900' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+<header class="12u-first" >
+			
+    <h1><span>Mc</span>Millian IT System Management</h1>
+    
+    <div class="menu-top"></div>
+    
+    <nav class="menu">
+        
+        <ul id="menu">
+        
+            <li><a href="../HTML/index.html" title="">Home</a></li>
+                                    
+            <li><a href="../PHP/view_projects.php" title="">View Projects</a></li>
+            
+            <li><a href="../PHP/view_consultants.php" title="">View Consultants</a></li>
+            
+            <li><a href="../PHP/view_projects_consultant.php" title="">View Project Staffing</a></li>
+            
+        </ul>
+        
+    </nav>
+
+</header>
+<h2>Add a New Consultant</h2>
+<form action="../PHP/add_consultant.php" method="post">
+    	<table id="mavis">
+        	<tr><th>Consultant ID</th><td><input type="text" name="strConsultantID" size="10" /></td></tr>
+            <tr><th>First Name</th><td><input type="text" name="strFirstName" size="20" /></td></tr>
+            <tr><th>Last Name</th><td><input type="text" name="strLastName" size="20" /></td></tr>
+            <tr><th>Phone</th><td><input type="text" name="strPhone" size="10" /></td></tr>
+            <tr><th>Mobile</th><td><input type="text" name="strMobile" size="10" /></td></tr>
+            <tr><th>Email</th><td><input type="text" name="strEmail" size="40" /></td></tr>
+            <tr><th>Date Commenced</th><td><input type="text" name="strDateCommenced" size="10" /></td></tr>
+            <tr><th>Date of Birth</th><td><input type="text" name="strDateOfBirth" size="10" /></td></tr>
+            <tr><th>Street Address</th><td><input type="text" name="strStreetAddress" size="40" /></td></tr>
+            <tr><th>Suburb</th><td><input type="text" name="strSuburb" size="30" /></td></tr>
+            <tr><th>Post Code</th><td><input type="text" name="intPostCode" size="4" /></td></tr>
+            <tr><td></td><td><input type="submit" name="submit" value="Add New Consultant" /></td></tr>
+        </table>
+    	
+</form>
+</body>
+</html>

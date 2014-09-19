@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+<script type="text/javascript">
+//显示弹出框
+function showdiv(){
+	document.getElementById("boxBG").style.display="block";			//将弹出框设为可见
+	document.getElementById("box").style.display="block";			//将隔挡层设为可见，阻止网页中操作
+	document.getElementsByTagName('body')[0].style.overflow="hidden";//阻止滚动条滚动
+}
+
+//去除弹出框
+function closediv(){
+	document.getElementById("box").style.display="none";
+	document.getElementById("boxBG").style.display="none";
+	document.getElementsByTagName('body')[0].style.overflow="scroll";
+}
+
+//当页面加载时，浏览器窗口变动时，滚动条滚动时启用该函数,主要功能是得到弹出框的位置
+function load(){
+	//得到网页可见高度和宽度
+	var boxBG_height=parseInt(document.documentElement.clientHeight);   
+	var boxBG_width=parseInt(document.documentElement.clientWidth);
+	//得到隔挡层的高度和宽度
+	document.getElementById("boxBG").style.height=boxBG_height+'px';
+	document.getElementById("boxBG").style.width=boxBG_width+'px';
+	//得到弹出框的高度和宽度
+	var p1=document.getElementById("box").style.width.indexOf('p');
+	var confirm_width=parseInt(document.getElementById('box').style.width.substr(0,p1));
+	var p2=document.getElementById("box").style.height.indexOf('p');
+	var confirm_height=parseInt(document.getElementById('box').style.height.substr(0,p2));
+	
+	//隔挡层的top值=滚动条滚动的高度
+	document.getElementById("boxBG").style.top=document.body.scrollTop+'px';
+	//弹出框的left属性值=（网页可见宽度-弹出框宽度）/2
+	document.getElementById("box").style.left=(boxBG_width-confirm_width)/2+'px';
+	//弹出框的height属性值=(网页可见高度-弹出框高度)/2+滚动条滚动的高度
+	document.getElementById("box").style.top=(boxBG_height-confirm_height)/2+parseInt(document.body.scrollTop)+'px';
+}
+
+window.onscroll=load;    //拉动滚动条则调用Load函数
+</script>
+</head>
+
+<body onload="load();" onresize="load();" style="height:1000px;">
+
+<div style="margin-top:500px;">
+<span  onclick="showdiv()" style="cursor:pointer;">购买</span>
+<a href="">取消</a>
+</div>
+
+<!--这里是一个隔挡div，主要是弹出框后，不允许背景层的任何操作-->
+<div id="boxBG" style="position:absolute; z-index:1; filter:alpha(opacity=10);opacity:0.1; background-color:#0066CC; left:0px; display:none;"></div>
+
+<!--这是弹出框,默认不可见-->
+<div id="box" style="position:absolute;width:500px; height:300px; overflow:hidden;  background-color:#FFFF99; z-index:2; display:none;">
+
+<div class='top' style="background-color:gray;text-align:right;">
+<a onclick="closediv()" style="cursor:pointer;">关闭</a>
+</div>
+
+<div class="main">
+用户名：<input type="text" /><br/>
+密 码：<input type="password"/><br/>
+<button type="button" onclick="closediv()">登录</button>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,2 @@
+,
+  CONSTRAINT `fk_AssessmentItem_Assessment1` FOREIGN KEY (`AssessmentID`) REFERENCES `assessment` (`AssessmentID`) ON DELETE NO ACTION ON UPDATE NO ACTION

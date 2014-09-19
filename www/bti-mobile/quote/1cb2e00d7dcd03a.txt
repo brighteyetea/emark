@@ -1,0 +1,11 @@
+2014-09-01 21:25:50
+Ref: 1cb2e00d7dcd03a
+Email: jackzhang8806@gmail.com
+TransferType: import
+From: SHANGHAI
+To: MELBOURNE
+ContainerType: 20GP
+FreightCharge: 425
+LocalCharge: 596.4
+Cartage: 387.6
+ClearanceCharge: 600

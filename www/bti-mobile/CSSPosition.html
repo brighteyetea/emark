@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+</head>
+
+<body>
+<div id="div-1">
+<p>id = div-1</p>
+<div id="div-1b">
+<p>id = div-1b</p>
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Integer pretium dui sit amet felis. Integer sit amet diam. Phasellus ultrices viverra velit. Nam mattis, arcu ut bibendum commodo, magna nisi tincidunt tortor, quis accumsan augue ipsum id lorem.
+</div>
+
+</div>
+<style>
+#div-1 {
+	width: 500px;
+	background-color: black;
+	color: white;	
+	position: relative;
+
+
+}
+#div-1b {
+	background-color: #666666;
+	position: absolute;
+	top: 0;
+	left: 1px;
+	width: 200px
+
+}
+
+</style>
+<script type="text/javascript">
+$(document).ready(function(e) {
+    alert("page ready");
+	var parentWidth = $("#div-1").width();
+	var selfWidth = $("#div-1b").width();
+	var left = (parentWidth - selfWidth) / 2;
+	$("#div-1b").css("left", left);
+});
+</script>
+
+</body>
+</html>

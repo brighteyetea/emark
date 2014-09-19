@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+
+<!-- disable iPhone inital scale -->
+<meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+<title>Demo: Adaptive Design With Media Queries</title>
+
+
+<!-- html5.js for IE less than 9 -->
+<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- css3-mediaqueries.js for IE less than 9 -->
+<!--[if lt IE 9]>
+	<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+<![endif]-->
+
+<!-- JQuery libary -->
+<script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<!-- fcl javascript -->
+
+</head>
+
+<body>
+	<header id="header">
+		<nav>
+			<ul id="main-nav" class="clearfix">
+				<li><a href="index.html">Quotation</a></li>
+				<li><a href="aboutUs.html">About Us</a></li>
+				<li><a href="termAndComments.html">Term & Comments</a></li>
+			</ul>
+			<!-- /#main-nav --> 
+		</nav>
+		<banner class="post-image">
+			<img src="images/logo-2.png"/>
+		</banner>
+	</header>
+<div id="pagewrap">
+	<fclOrLcl>
+		<ul id="select-button" class="clearfix">
+			<li><a href="javascript:showFclQuote()">FCL FREIGHT CALCULATOR</a></li>
+			<li><a href="javascript:showLclQuote()">LCL FREIGHT CALCULATOR</a></li>
+		</ul>
+		<!-- /#select-button --> 
+	</fclOrLcl>
+	<div id="content">
+		<div id="fcl_quote_id">
+			<br />
+			<select id="fcl_import_or_export_select_id" name="import_or_export">
+				<option value="0" disabled selected>Import Or Export</option> 
+				<option value="import">Import Sea</option>
+				<option value="export">Export Sea</option>
+			</select>
+			<br /><br />
+			<select size="1" id="fcl_load_port_select_id">
+				<option value="0" disabled selected>Select an origin port</option>
+			</select>
+			<br /><br />
+			<select name="discharge_port" size="1" id="fcl_discharge_port_select_id">
+				<option value="0" disabled selected>Select a destination port</option>
+			</select>
+			<br /><br/>
+			<select id="fcl_container_type_id">
+				<option value="0" disabled selected>Container type</option> 
+				<option value="20GP">20 FT GP</option>
+				<option value="40GP">40 FT GP</option>
+			</select>
+			<br /><br />
+			<select name="suburb" size="1" id="fcl_suburb_select_id">
+			<option value="0" selected>Delivery Or Pick Up</option>
+			</select>
+			<br /><br />
+			<select name="clearance" size="1" id="fcl_clearance_select_id">
+				<option value="0" disabled selected>Clearance</option>
+				<option value="Yes">Yes</option>
+				<option value="No">No</option>
+			</select>
+			<br /><br />
+			<input id="fcl_quote_button_id" type="button" value="GET QUOTE"/>
+		</div>
+		<!-- fcl_quote_id -->
+		
+		<div id="lcl_quote_id">
+			<br />
+			<select id="lcl_import_or_export_select_id" name="import_or_export">
+		        <option value="0" disabled selected>Import Or Export</option> 
+		        <option value="import">Import Sea</option>
+		        <option value="export">Export Sea</option>
+			</select>
+			<br /><br />
+			<select name="load_port" size="1" id="lcl_load_port_select_id">
+		        <option value="0" disabled selected>Select an origin port</option>
+		    </select>
+		    <br /><br />
+		    <select name="discharge_port" size="1" id="lcl_discharge_port_select_id">
+	        	<option value="0" disabled selected>Select a destination port</option>
+	    	</select>
+	    	<br /><br />
+	    	L&nbsp;<input id="lcl_input_l_id" type="text" size="2"/>&nbsp;*
+			W&nbsp;<input id="lcl_input_w_id" type="text" size="2"/>&nbsp;*
+			H&nbsp;<input id="lcl_input_h_id" type="text" size="2"/>&nbsp;cm
+			<br /><br />
+			OR&nbsp;&nbsp;WEIGHT&nbsp;<input id="lcl_input_weight_id" type="text" class="input_text"/>kg
+			<br /><br />
+			<select name="suburb" size="1" id="lcl_suburb_select_id">
+		        <option value="0" selected>Delivery Or Pick Up</option>
+		    </select>
+		    <br /><br />
+		    <select name="clearance" size="1" id="lcl_clearance_select_id">
+		        <option value="0" disabled selected>Clearance</option>
+				<option value="Yes">Yes</option>
+				<option value="No">No</option>
+		    </select>
+		    <br /><br />
+		    <input id="lcl_quote_button_id" type="button" value="GET QUOTE" class="input_get_quote"/>
+		</div>
+		<!-- lcl_quote_id -->
+
+		<div id="fcl_email_id">
+			<strong>
+				<br />Term & Comments:<br />" +
+				*  The above rates are current at the time of writing and are subject to alteration<br />
+				*  All business is transacted under our standard trading terms and conditions<br />
+				*  Cartage does not include detention charges<br/><br/><br/>
+			</strong>
+			<strong>E-mail</strong> <input id="e_mail_id_fcl" type="text" /><br/><br/>
+			<input id="e_mail_confirm_button_fcl" type="button" value="GET QUOTE" class="input_get_quote"/>
+			&nbsp;&nbsp;&nbsp;
+			<input id="e_mail_cancel_button_fcl" type="button" value="CANCEL" class="input_get_quote">
+		</div>
+		<!-- #fcl_email_id -->
+
+		<div id="lcl_email_id">
+			<strong><br />Term & Comments:<br />" +
+				*  The above rates are current at the time of writing and are subject to alteration<br />
+				*  All business is transacted under our standard trading terms and conditions<br />
+				*  Cartage does not include detention charges<br/><br/><br/>
+			</strong>
+			<strong>E-mail</strong> <input id="e_mail_id_lcl" type="text" /><br/><br/>
+			<input id="e_mail_confirm_button_lcl" type="button" value="GET QUOTE" class="input_get_quote"/>
+			&nbsp;&nbsp;&nbsp;
+			<input id="e_mail_cancel_button_lcl" type="button" value="CANCEL" class="input_get_quote">
+		</div>
+		<!-- #lcl_email_id -->
+
+		<div id="quote_result_id">
+
+		</div>
+
+		<!-- quote_result_id -->
+	</div>
+	<!-- /#content --> 
+	
+	
+
+	
+	
+</div>
+	<footer id="footer">
+		<ul>
+		<li>
+		<p>Design By <a href="#">Fuda</a></p>
+		</li>
+		<li>
+		<p>Contact Us <br/> 
+		Tel:1300 888 327<br />
+		Tel: +61 3 8336 9000</p>
+		</li>
+		</ul>
+	</footer>
+
+	<!-- /#footer -->
+</div>
+<!-- /#pagewrap -->
+<style>
+html, body, address, blockquote, div, dl, form, h1, h2, h3, h4, h5, h6, ol, p, pre, table, ul,
+dd, dt, li, tbody, td, tfoot, th, thead, tr, button, del, ins, map, object,
+a, abbr, acronym, b, bdo, big, br, cite, code, dfn, em, i, img, kbd, q, samp, small, span,
+strong, sub, sup, tt, var, legend, fieldset, fclOrLcl, banner, mask_email_id{
+	margin: 0;
+	padding: 0;
+}
+
+image, fieldset {
+	border: 0px;
+}
+
+image {
+	max-width: 100%;
+	height: auto;	
+}
+
+body {
+	background: #fff;
+	color: #666;
+	margin: 0px;
+}
+a {
+	color: #026acb;
+	text-decoration: none;
+	outline: none;
+}
+
+p {
+	margin: 0px 0px 1.2em;
+	padding: 0px;	
+}
+
+ul, ol {
+margin: 1em 0px 1.4em 24px;	
+}
+
+li {
+margin: 0px 0px 0.5em 0em;
+padding: 0px;	
+}
+
+select {
+	margin: 0px 0px 1.5em 0px;	
+}
+
+1, h2, h3, h4, h5, h6 {
+	line-height: 1.4em;
+	margin: 20px 0 .4em;
+	color: #fff;
+}
+
+#pagewrap {
+width: 980px;
+min-height: 100%;
+margin: 0px auto;
+}
+
+
+#loading_message_id2 {
+	text-align:center;
+	z-index:1001;
+	visibility: visible;
+	background-color: #fe3;
+	position: absolute;
+	left: auto;
+	top: 300px;
+	margin: 150px;
+
+}
+</style>
+<script type="text/javascript">
+$(document).ready(function(e) {
+   var windowWidth = $(window).width();
+   console.log("Window width: " + windowWidth);
+
+
+   
+
+});
+</script>
+
+<div id="loading_message_id2"><h1><br />Quote Processing</h1></div>
+
+<div id="waiting_id">
+
+</div>
+	<!-- #waiting_id -->
+</body>
+</html>
+
+<input type="search" value="Type search string here..." />

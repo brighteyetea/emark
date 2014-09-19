@@ -1,0 +1,214 @@
+
+.img-intro-left{
+	/*display:inline-block;
+	float:left;*/
+}
+
+
+/*----------bec----------------*/
+
+.all_industries h2 {
+	color:#606060;
+	font: 16px 'avenir', sans-serif;
+	line-height: 30px;
+    margin-bottom: 60px;
+	margin-top:-10px;
+	padding:0 20px 0 0;
+	
+}
+
+.all_industries h4 {
+	 color: #1b286a!important;
+	font: 24px 'avenir', sans-serif;
+	line-height: 30px;
+    margin-bottom: 30px;
+	line-height: 38px;
+
+	
+}
+
+/*----------bec----------------*/
+
+.all_industries .col-md-5, .all_industries .col-md-6{
+	float:none;
+	width:100%;
+	padding-left:0;
+}
+
+.all_industries .col-md-5 img{
+	width:97%;
+}
+
+.all_industries .items-leading, .all_industries .items-row{
+	/*float:left;*/
+	width:100%;
+}
+
+.all_industries .row{
+	width:50%;
+	float:left;
+	margin-left:0;
+	margin-right:0;
+}
+
+
+.category-desc{
+	padding-bottom: 10px;
+	border-bottom:1px solid lightgrey;
+	margin-bottom: 45px;
+}
+
+.caret {
+	display:none;
+}
+
+.home_link{
+	display:none;
+}
+
+.see_all{
+	color:red;
+	float:right;
+}
+
+.news .readmore a{
+		display:block;
+		float:left;
+		color:red;
+		padding:0 0 0 15px;
+}
+
+.chronoform{
+	display:none;
+}
+
+.news .readmore a{
+
+}
+
+.newsflash img, .col-xs-6 img, .item div a img{
+	transition: all 0.2s ease-in-out 0s;
+}
+
+.newsflash .ns_img, .item div a{
+	overflow:hidden;
+	display:block;
+/*	height:200px;*/
+	margin-bottom:10px;
+}
+
+.newsflash img:hover, .item div a img:hover{
+	transform:scale(1.2);
+}
+
+.col-xs-6 img:hover{
+	transform:scale(1.4);
+}
+
+.readmore a, .readmore, h3 a{
+	display:inline !important;
+	color:#1b286a;
+	height: auto !important;
+}
+
+.zoom{
+	/*transform:scale(1.4);*/
+}
+
+.newsflash_feed{
+	position:relative;
+	left:-2000px;
+}
+
+.logoCustomers .container ul{
+	position:relative;
+	left:-2000px;
+}
+
+.subPoints .container .row{
+	position:relative;
+	left:-2000px;
+}
+
+.bannerBig{
+	overflow:hidden;
+}
+
+.footerInfos a{
+	color:#fff;
+}
+
+.trackCode{
+	display:block;
+}
+
+.banner{
+	background:url("../img/bg4.png") repeat scroll 0 0 rgba(0, 0, 0, 0);
+}
+
+.videoBG{
+	top: -90px !important;
+}
+
+.navbar .nav{
+	position:relative;
+}
+
+.dropdown-menu{
+	margin-top:-18px !important;
+
+}
+
+.banner h1{
+	position:relative;
+}
+
+header .navbar-nav .dropdown-menu{
+	background:none !important;
+}
+
+header .navbar-nav .dropdown-menu a{
+ background: none repeat scroll 0 0 #1b286a;
+}
+
+.trackingSide .trackQuote{
+	display:block;
+}
+
+
+.navbar-nav > li > a {
+    padding-bottom: 5px;
+}
+
+@media only screen and (max-width: 768px) {
+	.all_industries .row{
+		width:100% !important;
+	}
+}
+
+@media only screen and (max-width: 768px) {
+	.jtbul .ico{
+		 height: 35px;
+    width: 35px;
+	}
+	
+	
+	.dropdown-menu{
+		display:none !important;
+	}
+	
+	.sideNav a {
+		height:auto !important;
+	}
+}
+
+@media screen and (min-device-width: 320px) and (max-device-width: 767px) { 
+	
+	 .col-xs-6 img {
+	    transform: scale(1);
+	}
+
+	  .col-xs-6 img:hover {
+	    transform: scale(1);
+	}
+}

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>QS 1.2 Admin</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="/QS1.2/JS/jquery-1.11.0.js"></script>
+        <script type="text/javascript" src="/QS1.2/JS/adminFunctions.js"></script>
+        <script type="text/javascript">
+        $(document).ready(function() {
+            loadCountry();
+            loadCompany();
+            loadLocalChargeAndCartage();
+            $("#div_ports #country_select_id").change(function(){
+                loadPorts($(this).children('option:selected').val());
+            });
+            $("#div_cartage #port_select_id").change(function(){
+                loadSuburb($(this).children('option:selected').val());
+            });
+            $("#div_freight #export_or_import_select_id").change(function(){      
+                var request = $.ajax({
+                    type: "POST",
+                    url: "../loadPorts.php",
+                    dataType: "json",
+                    data: {transferType: $(this).children('option:selected').val()},
+                    ansync: false,
+                    cache: false
+                });
+                
+                request.done(function(jsonData){
+                    //init ports select
+                    $("#div_freight #load_port_select_id").empty();
+                    $("#div_freight #discharge_port_select_id").empty();
+                    $("#div_freight  #load_port_select_id [value = 0]").prop("disabled", true);
+                    $("#div_freight #load_port_select_id [value = 0]").attr("selected", true);
+                    $("#div_freight #discharge_port_select_id [value = 0]").prop("disabled", true);
+                    $("#div_freight #discharge_port_select_id [value = 0]").attr("selected", true);
+                    
+                    for(var portID in jsonData[0]) {
+                        $("#div_freight #load_port_select_id").append(new Option(jsonData[0][portID], portID));
+                    } 
+                    
+                    for(var portID in jsonData[1]) {
+                        $("#div_freight #discharge_port_select_id").append(new Option(jsonData[1][portID], portID));
+                    }
+                });
+            });
+            $("#new_port_button_id").click(function(){
+                var request = $.ajax({
+                    type: "POST",
+                    url: "addNewPort.php",
+                    dataType: "json",
+                    data:{  portName: $("#text_port_name").val(),
+                            countryName: $("#text_port_country").val(),
+                            code: $("#text_port_code").val()},
+                    ansync: false,
+                    cache: false
+                });
+                
+                request.done(function(jsonData){
+                    alert(jsonData);
+                    freshPage();
+                });
+            });
+            
+            $("#new_company_button_id").click(function(){
+                var request = $.ajax({
+                    type: "POST",
+                    url: "addNewCompany.php",
+                    dataType: "json",
+                    data:{companyName: $("#text_company_name_id").val(),
+                           companyDesc: $("#text_company_desc_id").val()},
+                    ansync: false,
+                    cache: false
+                });
+                
+                request.done(function(jsonData){
+                    alert(jsonData);
+                    freshPage();
+                });
+            });
+            
+            $("#div_freight #new_freight_button_id").click(function(){
+                var request = $.ajax({
+                    type: "POST",
+                    url: "addNewFreight.php",
+                    dataType: "json",
+                    data:{ transferType: $("#div_freight #export_or_import_select_id").children('option:selected').val(),
+                            loadPortID: $("#div_freight #load_port_select_id").children('option:selected').val(),
+                            dischargePortID: $("#div_freight #discharge_port_select_id").children('option:selected').val(),
+                            company: $("#div_freight #company_select_id").children('option:selected').val(),
+                            a20GPCharge:  $("#div_freight #text_20GP_charge_id").val(),
+                            a40GPCharge: $("#div_freight #text_40GP_charge_id").val(),
+                            a40HCCharge: $("#div_freight #text_40HC_charge_id").val(),
+                            transmitDays: $("#div_freight #text_transmit_days_id").val(),
+                            expiration:  $("#div_freight #text_experiation_id").val()},
+                    ansync: false,
+                    cache: false
+                });
+                
+                request.done(function(jsonData){
+                    alert(jsonData);
+                    freshPage();
+                });
+            });
+            
+            $("#div_local_charge #new_local_charge_button_id").click(function(){
+                var request = $.ajax({
+                    type: "POST",
+                    url: "addNewLocalCharge.php",
+                    dataType: "json",
+                    data:{ transferType: $("#div_local_charge #export_or_import_select_id").children('option:selected').val(),
+                            portID: $("#div_local_charge #port_select_id").children('option:selected').val(),
+                            company: $("#div_local_charge #company_select_id").children('option:selected').val(),
+                            a20GPCharge:  $("#div_local_charge #text_20GP_charge_id").val(),
+                            a40GPCharge: $("#div_local_charge #text_40GP_charge_id").val()},
+                    ansync: false,
+                    cache: false
+                });
+                
+                request.done(function(jsonData){
+                    alert(jsonData);
+                });
+            });
+            
+            $("#div_cartage #new_cartage_button_id").click(function(){
+                var request = $.ajax({
+                    type: "POST",
+                    url: "addNewCartage.php",
+                    dataType: "json",
+                    data:{  portID: $("#div_cartage #port_select_id").children('option:selected').val(),
+                            suburb: $("#div_cartage #text_suburb_id").val(),
+                            a20GPCharge:  $("#div_cartage #text_20GP_charge_id").val(),
+                            a40GPCharge: $("#div_cartage #text_40GP_charge_id").val()},
+                    ansync: false,
+                    cache: false
+                });
+                
+                request.done(function(jsonData){
+                    alert(jsonData);
+                });
+            });
+        });
+        
+        function freshPage() { //after add reload page
+            loadCountry();
+            loadCompany();
+            loadLocalChargeAndCartage();
+        }
+        
+        </script>
+    </head>
+    <body>
+        <div id="div_ports">
+        <fieldset>
+        <legend>Ports</legend>
+        	Country 
+            <select name="country_list" id="country_select_id" size="2">
+            </select>
+        	Port 
+            <select name="ports_list" id="ports_select_id" size="2">
+            </select>
+            <br />
+            Port Name: <input name="port_name" type="text" id="text_port_name">
+            Port Country: <input name="port_country" type="text" id="text_port_country"> 
+            Port Code: <input name="port_country" type="text" id="text_port_code"> 
+            <input name="new_port_button" type="button" value="New Port" id= "new_port_button_id">
+        </fieldset>
+        </div>
+        <div style="clear:both"></div>
+        <div id="div_company">
+        <fieldset>
+       	<legend>Company</legend>
+        	Company:
+            <select name="company_list" id="company_select_id" size="2">
+        	</select>
+            <br />
+            Company name: <input name="company_name" type="text" id="text_company_name_id"> 
+            Company description: <input name="company_desc" type="text" id="text_company_desc_id"> 
+            <input name="new_company_button" type="button" value="New Company" id="new_company_button_id">
+        </fieldset>
+        </div>
+        <div id="div_freight">
+        <fieldset>
+       	<legend>Freight Charge</legend>
+        	Export Or Import:             
+            <select name="export_or_import" id="export_or_import_select_id">
+                <option value="0" disabled selected>-- select --</option> 
+            	<option value="export">Export</option>
+                <option value="import">Import</option>
+        	</select>
+          	<br />
+        	Load port:
+            <select name="load_port" id="load_port_select_id">
+            </select>
+            Discharge Port:
+            <select name="discharge_port" id="discharge_port_select_id">
+            </select>
+            Company:
+            <select name="freight_company" id="company_select_id">
+        	</select>
+            <br />
+            20 GP Charge: <input name="20GP_charge" type="text" id="text_20GP_charge_id">
+            40 GP Charge: <input name="40GP_charge" type="text" id="text_40GP_charge_id">
+            40 HC Charge: <input name="40HC_charge" type="text" id="text_40HC_charge_id">
+            <br />
+            Transmit days: <input name="transmit_days" type="text" id="text_transmit_days_id">
+            Experiation(yyyy-mm-dd): <input name="experiation" type="text" id="text_experiation_id">
+            <input name="new_freight_button" type="button" value="New Freight Charge" id="new_freight_button_id">
+        </fieldset>
+        </div>
+        <div id="div_local_charge">
+        <fieldset>
+       	<legend>Local Charge</legend>
+        	Export Or Import:             
+            <select name="export_or_import" id="export_or_import_select_id">
+                <option value="0" disabled selected>-- select --</option> 
+            	<option value="export">Export</option>
+                <option value="import">Import</option>
+        	</select>
+          	<br />
+        	Port:
+            <select name="port" id="port_select_id">
+            </select>
+            Company:
+            <select name="company" id="company_select_id">
+        	</select>
+            <br />
+            20 GP Charge: <input name="20GP_charge" type="text" id="text_20GP_charge_id">
+            40 GP Charge: <input name="40GP_charge" type="text" id="text_40GP_charge_id">
+            <input name="new_local_charge_button" type="button" value="New Local Charge" id="new_local_charge_button_id">
+        </fieldset>
+        </div>
+        <div>
+        <fieldset>
+       	<legend>Clearence</legend>
+        </fieldset>
+        </div>
+        <div id="div_cartage">
+        <fieldset>
+       	<legend>Cartage</legend>
+        	Port:
+            <select name="port" id="port_select_id" size="2">
+            </select>
+            Suburb:
+            <select name="suburb" id="suburb_select_id" size="2">
+            </select>
+            <br />
+            Suburb:
+            <input name="Suburb" type="text" id="text_suburb_id">
+            <br />
+            20 GP Charge: <input name="20GP_charge" type="text" id="text_20GP_charge_id">
+            40 GP Charge: <input name="40GP_charge" type="text" id="text_40GP_charge_id">
+            <input name="new_cartage_button" type="button" value="New Cartage Charge" id="new_cartage_button_id">
+        </fieldset>
+        </div>
+    </body>
+</html>
